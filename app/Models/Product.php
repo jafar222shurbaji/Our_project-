@@ -8,6 +8,9 @@ use App\Models\Color;
 use App\Models\Fabric;
 use App\Models\Wood;
 use App\Models\ProductImage;
+use App\Models\Favorite;
+use App\Models\User;
+use App\Models\OrderItem;
 
 class Product extends Model
 {
@@ -38,5 +41,20 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    // public function favoritedByUsers()
+    // {
+    //     return $this->belongsToMany(User::class, 'favorites');
+    // }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }
