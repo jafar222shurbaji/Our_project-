@@ -30,7 +30,6 @@ class ProductSeeder extends Seeder
                     'available_quantity' => $faker->numberBetween(1, 50),
                     'category_id' => $faker->randomElement($categories),
                     'color_id' => $faker->randomElement($colors),
-                    'model_3d' => $faker->word . '_model.glb',
                     'fabric_id' => $faker->randomElement($fabrics),
                     'wood_id' => $faker->randomElement($woods),
                 ]);

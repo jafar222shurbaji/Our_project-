@@ -25,7 +25,7 @@ class FavoriteController extends Controller
         ]);
         $favorite = $this->favoriteService->addFavorite(Auth::user()->id, $validated['product_id']);
         if ($favorite) {
-            return ApiResponse::successWithData((new FavoritesResource($favorite))->toArray($request), 'Added to favorites', 201);
+            return ApiResponse::success("Add Successfully",  201);
         } else {
             return ApiResponse::error('Already in favorites', 200);
         }

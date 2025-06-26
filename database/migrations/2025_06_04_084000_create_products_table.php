@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->string("description");
             $table->integer("available_quantity");
             $table->foreignId("color_id")->references("id")->on("colors");
-            $table->string("model_3d");
             $table->foreignId('fabric_id')->references('id')->on('fabrics');
             $table->foreignId('wood_id')->references('id')->on('woods');
             $table->timestamps();

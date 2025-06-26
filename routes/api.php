@@ -47,8 +47,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 // Home APIs
-Route::post('createProduct', [ProductController::class, 'store']);
-Route::get('products/search', [ProductController::class, 'search']);
-Route::get('getProduct', [ProductController::class, 'getProduct']);
-Route::get('getcategories', [ProductController::class, 'getcategories']);
-Route::get('getProductByCategoryId', [ProductController::class, 'getProductByCategoryId']);
+Route::get('products/search', [HomeContoller::class, 'search']);
+Route::get('getProducts', [HomeContoller::class, 'getProducts']);
+Route::get('getcategories', [HomeContoller::class, 'getcategories']);
+Route::get('getProductByCategoryId', [HomeContoller::class, 'getProductByCategoryId']);

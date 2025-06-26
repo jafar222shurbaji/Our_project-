@@ -10,7 +10,6 @@ class FavoritesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
             'product' => [
                 'id' => $this->product->id,
                 'name' => $this->product->name,
@@ -22,7 +21,6 @@ class FavoritesResource extends JsonResource
                 'fabric' => $this->product->fabric->fabric_type,
                 'wood' => $this->product->wood->wood_type,
                 'images' => $this->product->images->map(fn($image) => $image->image_path),
-                'model_3d' => $this->product->model_3d,
             ],
         ];
     }

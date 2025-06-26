@@ -15,10 +15,12 @@ class FavoriteService
         if ($existing) {
             return null;
         }
-        return Favorite::create([
+        Favorite::create([
             'user_id' => $userId,
             'product_id' => $productId,
         ]);
+
+        return true;
     }
 
     public function getFavorites($userId)

@@ -16,7 +16,7 @@ class Product extends Model
 {
     use SoftDeletes;
     protected $table = "products";
-    protected $fillable = ["price", "name", "description", "available_quantity", "color_id", "model_3d", "category_id", "fabric_id", "wood_id"];
+    protected $fillable = ["price", "name", "description", "available_quantity", "color_id", "category_id", "fabric_id", "wood_id"];
 
     public function color()
     {
