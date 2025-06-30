@@ -38,9 +38,10 @@ class Product extends Model
         return $this->belongsTo(Wood::class);
     }
 
-    public function images()
+    
+    public function photos()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(Photo::class);
     }
 
     public function favorites()
@@ -48,10 +49,11 @@ class Product extends Model
         return $this->hasMany(Favorite::class);
     }
 
-    // public function favoritedByUsers()
-    // {
-    //     return $this->belongsToMany(User::class, 'favorites');
-    // }
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
 
     public function orderItems()
     {

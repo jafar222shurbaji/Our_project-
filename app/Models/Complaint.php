@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Compaint extends Model
+class Complaint extends Model
 {
     use HasFactory;
 
-    protected $table = 'compaints';
+    protected $table = 'complaints';
     protected $fillable = [
         'user_id',
         'description',
-        'treatment_status',
-        'complaint_suggestion',
+        'status',
+        'type',
     ];
 
     public function user()

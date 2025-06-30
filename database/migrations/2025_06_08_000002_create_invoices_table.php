@@ -12,7 +12,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->enum('status', ['pending', 'paid'])->default('pending');
-            $table->string('payment_method');
+            $table->string("card_number")->nullable();
+            $table->string("card_code")->nullable();
             $table->timestamps();
         });
     }

@@ -61,12 +61,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function favorites()
     {
-        return $this->hasMany(Favorite::class);
+        return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
     }
 
-    public function compaints()
+    public function complaints()
     {
-        return $this->hasMany(Compaint::class);
+        return $this->hasMany(Complaint::class);
     }
 
     public function invoices()

@@ -14,6 +14,7 @@ class OrderItemResource extends JsonResource
             'order_id' => $this->order_id,
             'quantity' => $this->quantity,
             'price' => $this->price,
+            //رجع الصور كمان
         ];
     }
 }

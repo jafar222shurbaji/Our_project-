@@ -12,8 +12,12 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['cart', 'submited', 'preparing', 'On_shipping', 'delivered'])->default('cart');
+            $table->enum('status', ['submitted', 'preparing', 'on_shipping', 'delivered', 'cancelled'])->default('submitted');
             $table->foreignId("user_id")->references("id")->on("users");
+            $table->boolean("shipping_required");
+            $table->string("location")->nullable();
+            $table->string("phone_number");
+            $table->enum('payment_method', ['online_prepayment', 'pay_on_pickup']);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -3,48 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResponse;
-use App\Http\Resources\FavoritesResource;
+use App\Http\Resources\ProductResource;
+use App\Models\Product;
 use App\Services\FavoriteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
-    //
-
     protected $favoriteService;
 
     public function __construct(FavoriteService $favoriteService)
     {
         $this->favoriteService = $favoriteService;
     }
-    public function addFavorite(Request $request)
+
+    public function toggle(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'required|exists:products,id',
         ]);
-        $favorite = $this->favoriteService->addFavorite(Auth::user()->id, $validated['product_id']);
-        if ($favorite) {
-            return ApiResponse::success("Add Successfully",  201);
+        $product = Product::findOrFail($validated['product_id']);
+        $result = $this->favoriteService->toggleFavorite($product);
+        if ($result === 'added') {
+            return ApiResponse::success('Added to favorites');
         } else {
-            return ApiResponse::error('Already in favorites', 200);
+            return ApiResponse::success('Removed from favorites');
         }
-    }
-    public function getFavorites()
-    {
-        $favorites = $this->favoriteService->getFavorites(Auth::user()->id);
-        return ApiResponse::successWithData((FavoritesResource::collection($favorites))->toArray(request()) , 'Favorites retrieved successfully', 200);
     }
 
-    public function removeFavorite(Request $request)
+    public function index()
     {
-        $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-        ]);
-        $result = $this->favoriteService->removeFavorite(Auth::id(), $validated['product_id']);
-        if(!$result){
-            return ApiResponse::error('Not in favorites', 400);
-        }
-        return ApiResponse::success('Removed from favorites', 200);
+        $favorites = $this->favoriteService->getUserFavorites();
+
+        return ProductResource::collection($favorites);
     }
+
 }

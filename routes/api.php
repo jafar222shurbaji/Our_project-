@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompaintController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeContoller;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -39,12 +42,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     // Favorite APIs
     Route::prefix('favorite')->group(function () {
-        Route::post('add', [FavoriteController::class, 'addFavorite']);
-        Route::get('get', [FavoriteController::class, 'getFavorites']);
-        Route::delete('delete', [FavoriteController::class, 'removeFavorite']);
+        Route::post('add/remove', [FavoriteController::class, 'toggle']);
+        Route::get('get', [FavoriteController::class, 'index']);
+
+    });
+    Route::prefix('complaints')->group(function () {
+        Route::post('add', [ComplaintController::class, 'store']);
+        Route::get('get', [ComplaintController::class, 'index']);
+        Route::get('/user', [ComplaintController::class, 'userComplaints']);
+    });
+
+    Route::prefix('order')->group(function () {
+        Route::post('add', [OrderController::class, 'store']);
     });
 });
-
 
 // Home APIs
 Route::get('products/search', [HomeContoller::class, 'search']);

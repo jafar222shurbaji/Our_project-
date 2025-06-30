@@ -14,9 +14,10 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => 'web',
+        'passwords' => 'employees',
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -34,9 +35,12 @@ return [
     | Supported: "session"
     |
     */
-
     'guards' => [
         'web' => [
+            'driver' => 'session',
+            'provider' => 'employees',
+        ],
+        'employee' => [
             'driver' => 'session',
             'provider' => 'employees',
         ],
@@ -45,6 +49,7 @@ return [
             'provider' => 'users',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -63,15 +68,15 @@ return [
     |
     */
 
-    'providers' => [
+   'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-        
+
         'employees' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Employee::class),
+            'model' => App\Models\Employee::class,
         ],
 
         // 'users' => [
@@ -108,7 +113,7 @@ return [
         ],
         'employees' => [
             'provider' => 'employees',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'table' =>  'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -3,43 +3,39 @@
 namespace App\Services;
 
 use App\Models\Favorite;
+use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 
 class FavoriteService
 {
-    public function addFavorite($userId, $productId)
+    public function toggleFavorite(Product $product): string
     {
-        // Prevent duplicate favorites
-        $existing = Favorite::where('user_id', $userId)
-            ->where('product_id', $productId)
-            ->first();
-        if ($existing) {
-            return null;
+        $user = Auth::user();
+
+        if ($user->favorites()->where('product_id', $product->id)->exists()) {
+            $user->favorites()->detach($product->id);
+            return 'removed';
+        } else {
+            $user->favorites()->attach($product->id);
+
+            return 'added';
         }
-        Favorite::create([
-            'user_id' => $userId,
-            'product_id' => $productId,
-        ]);
-
-        return true;
     }
 
-    public function getFavorites($userId)
+    public function isFavorited(Product $product): bool
     {
-        return Favorite::where('user_id', $userId)->paginate(6);
-    }
-
-    public function removeFavorite($userId, $productId)
-    {
-        $existing = Favorite::where('user_id', $userId)
-            ->where('product_id', $productId)
-            ->first();
-        if (!$existing) {
-            return null;
+        $user = Auth::user();
+        if (!$user) {
+            return false;
         }
 
-        $result = Favorite::where('user_id', $userId)
-            ->where('product_id', $productId)
-            ->delete();
-        return $result;
+        return $user->favorites()->where('product_id', $product->id)->exists();
     }
+    public function getUserFavorites()
+    {
+        $user = Auth::user();
+        return $user->favorites;
+    }
+
 }
+

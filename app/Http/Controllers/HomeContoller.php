@@ -34,7 +34,7 @@ class HomeContoller extends Controller
 
     public function getProducts()
     {
-        $products = $this->productService->getAll(5);
+        $products = $this->productService->getAll(10);
         return ApiResponse::successWithData(
             ProductResource::collection($products)->toArray(request()),
             'Products fetched successfully',

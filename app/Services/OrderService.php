@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Invoice;
 use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
@@ -11,46 +14,76 @@ class OrderService
         return Order::with('orderItems')->where('user_id', $userId)->get();
     }
 
-    public function getOrder($id, $userId)
-    {
-        return Order::with('orderItems')->where('user_id', $userId)->findOrFail($id);
-    }
 
     public function createOrder($userId, array $orderItems)
     {
         $order = Order::create([
             'user_id' => $userId,
-            'status' => 'cart',
+            'status' => 'submitted',
+            'location' => $orderItems['location'] ?? null,
+            'phone_number' => $orderItems['phone_number'],
+            'shipping_required' => $orderItems['shipping_required'],
+            'payment_method' => $orderItems['payment_method'],
         ]);
-        foreach ($orderItems as $item) {
+        $invoice = Invoice::create([
+            'order_id' => $order->id,
+            'user_id' => $userId,
+            'status' => 'pending',
+            'card_number' => $orderItems['card_number'] ?? null,
+            'card_code' => $orderItems['card_code'] ?? null,
+
+        ]);
+        foreach ($orderItems['order_items'] as $item) {
             $order->orderItems()->create($item);
         }
         return $order->load('orderItems');
     }
 
-    public function updateOrder(Order $order, array $data)
+
+    /**
+     * Cancel an existing order.
+     *
+     * @param Order $order
+     * @return void
+     * @throws \Exception
+     */
+    public function cancelOrder(Order $order): void
     {
-        if (isset($data['status'])) {
-            $order->status = $data['status'];
-            $order->save();
+        $user = Auth::user();
+
+        // Ensure the user owns the order
+        if ($order->user_id !== $user->id) {
+            throw new \Exception('You do not have permission to cancel this order.');
         }
-        if (isset($data['order_items'])) {
-            foreach ($data['order_items'] as $item) {
-                if (isset($item['id'])) {
-                    $orderItem = $order->orderItems()->find($item['id']);
-                    if ($orderItem) {
-                        $orderItem->update($item);
-                    }
-                } else {
-                    $order->orderItems()->create($item);
+
+        // Check if the order is already in a state that cannot be cancelled
+        if (in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
+            throw new \Exception('Order can no longer be cancelled.');
+        }
+
+        $canCancel = false;
+
+        // Rule 1: Shipping required
+        if ($order->shipping_required) {
+            if ($order->status === 'submitted') {
+                $canCancel = true;
+            }
+        }
+        // Rule 2: Shipping not required
+        else {
+            if ($order->payment_method === 'Online_prepayment' && $order->status === 'submitted') {
+                $canCancel = true;
+            } elseif ($order->payment_method === 'pay_on_pickup') {
+                // User can cancel within 48 hours
+                if ($order->created_at->gt(now()->subHours(48))) {
+                    $canCancel = true;
                 }
             }
         }
-        return $order->load('orderItems');
-    }
 
-    public function deleteOrder(Order $order)
-    {
-        return $order->delete();
+        if (!$canCancel) {
+            throw new \Exception('The conditions for cancelling this order have not been met.');
+        }
+
+        $order->cancel();
     }
-}

@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('product_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('image_path');
-            $table->timestamps();
-        });
+       Schema::create('photos', function (Blueprint $table) {
+        $table->id();
+        $table->string('photo');
+        $table->foreignId('product_id')->constrained()->onDelete('cascade');
+        $table->timestamps();
+    });
     }
 
     public function down(): void

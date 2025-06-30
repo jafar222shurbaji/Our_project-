@@ -10,21 +10,21 @@ class ProductService
 {
     public function getAll($perPage = 5)
     {
-        return Product::with('images')->paginate($perPage);
+        return Product::with('photos')->paginate($perPage);
     }
 
     public function search($name, $perPage = 15)
     {
         return Product::query()
             ->where('name', 'LIKE', '%' . $name . '%')
-            ->with('images')
+            ->with('photos')
             ->paginate($perPage);
     }
 
     public function getByCategory($categoryId, $perPage = 5)
     {
         return Product::where('category_id', $categoryId)
-            ->with('images')
+            ->with('photos')
             ->paginate($perPage);
     }
 
