@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("category_id")->references("id")->on("categories");
             $table->double("price");
             $table->string("name");
             $table->string("description");
             $table->integer("available_quantity");
-            $table->foreignId("color_id")->references("id")->on("colors");
-            $table->foreignId('fabric_id')->references('id')->on('fabrics');
-            $table->foreignId('wood_id')->references('id')->on('woods');
+            $table->foreignId("category_id")->references("id")->on("categories");
+            $table->foreignId("color_id")->nullable()->references("id")->on("colors");
+            $table->foreignId('fabric_id')->nullable()->references('id')->on('fabrics');
+            $table->foreignId('wood_id')->nullable()->references('id')->on('woods');
             $table->timestamps();
             $table->softDeletes();
         });

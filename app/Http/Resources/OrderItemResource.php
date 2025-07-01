@@ -9,12 +9,13 @@ class OrderItemResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
             'product_id' => $this->product_id,
-            'order_id' => $this->order_id,
+            'product_name' => $this->product->name,
             'quantity' => $this->quantity,
             'price' => $this->price,
-            //رجع الصور كمان
+            'images' => $this->product->photos->map(function ($image) {
+                return asset('storage/' . $image->photo);
+            }),
         ];
     }
 }

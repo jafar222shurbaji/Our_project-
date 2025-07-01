@@ -25,16 +25,14 @@ class FavoriteService
     public function isFavorited(Product $product): bool
     {
         $user = Auth::user();
-        if (!$user) {
-            return false;
-        }
-
         return $user->favorites()->where('product_id', $product->id)->exists();
     }
     public function getUserFavorites()
     {
         $user = Auth::user();
-        return $user->favorites;
+
+        // Eager-load the necessary relationships on the favorite products.
+        return $user->favorites()->with(['photos', 'favorites'])->get();
     }
 
 }

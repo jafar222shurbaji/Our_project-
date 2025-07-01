@@ -14,9 +14,8 @@ class ProductResource extends JsonResource
     {
         $isFavorited = false;
 
-        if (auth()->guard('sanctum')->check()) {
-            $service = app(FavoriteService::class);
-            $isFavorited = $service->isFavorited($this->resource);
+        if (Auth::check() && $this->relationLoaded('favorites')) {
+            $isFavorited = $this->favorites->contains('user_id', Auth::id());
         }
 
         return [

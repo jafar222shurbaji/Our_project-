@@ -33,13 +33,16 @@ class OrderController extends Controller
         $validated = $request->validated();
 
         $order = $this->orderService->createOrder(Auth::id(), $validated);
-        return ApiResponse::successWithData((new OrderResource($order))->toArray(request()), "added successfully", 201);
+        return ApiResponse::success("Added successfully", 200);
     }
 
 
-
-    public function cancel(Order $order)
+    public function cancel(Request $request)
     {
+        $request->validate([
+            'order_id' => 'required|integer|exists:orders,id'
+        ]);
+        $order = Order::where('id',$request->order_id)->first();
         try {
             $this->orderService->cancelOrder($order);
             return ApiResponse::success('Order cancelled successfully.', 200);

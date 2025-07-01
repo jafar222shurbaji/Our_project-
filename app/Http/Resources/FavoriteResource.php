@@ -20,7 +20,8 @@ class FavoriteResource extends JsonResource
                 'color' => $this->product->color->name,
                 'fabric' => $this->product->fabric->fabric_type,
                 'wood' => $this->product->wood->wood_type,
-                'images' => $this->product->images->map(fn($image) => $image->image_path),
+                'images' => $this->product->photos->map(fn($image) => $image->photo),
+                
             ],
         ];
     }

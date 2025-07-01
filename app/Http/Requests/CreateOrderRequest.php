@@ -23,6 +23,7 @@ class CreateOrderRequest extends FormRequest
     {
         return [
             'shipping_required' => "boolean|required",
+            'payment_method' => 'required|string|in:online_prepayment,pay_on_pickup',
             'location' => 'nullable|string|required_if:shipping_required,true',
             'card_number' => 'nullable|string|size:8|required_if:shipping_required,true',
             'card_code' => 'nullable|string|size:4|required_if:shipping_required,true',

@@ -52,9 +52,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user', [ComplaintController::class, 'userComplaints']);
     });
 
-    Route::prefix('order')->group(function () {
-        Route::post('add', [OrderController::class, 'store']);
-    });
+    // Order APIs
+    Route::apiResource('orders', OrderController::class)->only(['index', 'store']);
+    Route::post('orders/cancel', [OrderController::class, 'cancel']);
 });
 
 // Home APIs

@@ -9,7 +9,7 @@ class Order extends Model
 {
     protected $table = 'orders';
 
-    protected $fillable = ["status", "user_id", "shipping_required", "location", "phone_number", "payment_method"];
+    protected $fillable = ["status", "user_id", "shipping_required", "location", "phone_number", "payment_method", "total_price"];
     public function user()
     {
         return $this->belongsTo(User::class);

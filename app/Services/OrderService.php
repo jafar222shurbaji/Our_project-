@@ -15,25 +15,32 @@ class OrderService
     }
 
 
-    public function createOrder($userId, array $orderItems)
+    public function createOrder($userId, array $orderData)
     {
+        // Calculate total price from order items
+        $totalPrice = 0;
+        foreach ($orderData['order_items'] as $item) {
+            $totalPrice += $item['price'] * $item['quantity'];
+        }
+
         $order = Order::create([
             'user_id' => $userId,
             'status' => 'submitted',
-            'location' => $orderItems['location'] ?? null,
-            'phone_number' => $orderItems['phone_number'],
-            'shipping_required' => $orderItems['shipping_required'],
-            'payment_method' => $orderItems['payment_method'],
+            'location' => $orderData['location'] ?? null,
+            'phone_number' => $orderData['phone_number'],
+            'shipping_required' => $orderData['shipping_required'],
+            'payment_method' => $orderData['payment_method'] ?? 'pay_on_pickup',
+            'total_price' => $totalPrice,
         ]);
         $invoice = Invoice::create([
             'order_id' => $order->id,
             'user_id' => $userId,
             'status' => 'pending',
-            'card_number' => $orderItems['card_number'] ?? null,
-            'card_code' => $orderItems['card_code'] ?? null,
+            'card_number' => $orderData['card_number'] ?? null,
+            'card_code' => $orderData['card_code'] ?? null,
 
         ]);
-        foreach ($orderItems['order_items'] as $item) {
+        foreach ($orderData['order_items'] as $item) {
             $order->orderItems()->create($item);
         }
         return $order->load('orderItems');
@@ -53,18 +60,24 @@ class OrderService
 
         // Ensure the user owns the order
         if ($order->user_id !== $user->id) {
+            // Log the IDs for debugging purposes
+            \Illuminate\Support\Facades\Log::warning('Permission denied to cancel order.', [
+                'order_id' => $order->id,
+                'order_owner_id' => $order->user_id,
+                'attempted_by_user_id' => $user->id
+            ]);
             throw new \Exception('You do not have permission to cancel this order.');
         }
 
         // Check if the order is already in a state that cannot be cancelled
-        if (in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
+        if (in_array($order->status, ['preparing', 'on_shipping', 'delivered', 'cancelled'])) {
             throw new \Exception('Order can no longer be cancelled.');
         }
 
         $canCancel = false;
 
         // Rule 1: Shipping required
-        if ($order->shipping_required) {
+        if ($order->shipping_required == true) {
             if ($order->status === 'submitted') {
                 $canCancel = true;
             }
@@ -87,3 +100,4 @@ class OrderService
 
         $order->cancel();
     }
+}

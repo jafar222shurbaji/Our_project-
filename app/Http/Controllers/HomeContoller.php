@@ -22,19 +22,15 @@ class HomeContoller extends Controller
     {
         $request->validate([
             'name' => 'required|string|min:2',
-            'per_page' => 'sometimes|integer|min:1|max:100'
         ]);
 
-        $products = $this->productService->search(
-            $request->name,
-            $request->input('per_page', 15)
-        );
+        $products = $this->productService->search($request);
         return ProductResource::collection($products);
     }
 
-    public function getProducts()
+    public function getProducts(Request $request)
     {
-        $products = $this->productService->getAll(10);
+        $products = $this->productService->getAll($request);
         return ApiResponse::successWithData(
             ProductResource::collection($products)->toArray(request()),
             'Products fetched successfully',
@@ -48,10 +44,7 @@ class HomeContoller extends Controller
             "category_id" => "required|integer",
         ]);
 
-        $products = $this->productService->getByCategory(
-            $request->category_id,
-            5
-        );
+        $products = $this->productService->getByCategory($request);
 
         return ApiResponse::successWithData(
             ProductResource::collection($products)->toArray(request()),
