@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['submitted', 'preparing', 'on_shipping', 'delivered', 'cancelled'])->default('submitted');
-            $table->foreignId("user_id")->references("id")->on("users");
+            $table->foreignId("user_id")->references("id")->on("users")->onDelete("cascade");
             $table->boolean("shipping_required");
             $table->string("location")->nullable();
             $table->string("phone_number");
