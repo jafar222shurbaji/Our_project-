@@ -13,6 +13,7 @@ class Invoice extends Model
     protected $fillable = [
         'user_id',
         'order_id',
+        'employee_id',
         'card_number',
         'card_code',
         'invoice_status',
@@ -28,4 +29,22 @@ class Invoice extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function orderItems()
+    {
+        return $this->hasManyThrough(
+            OrderItem::class,
+            Order::class,
+            'id',           // Foreign key on orders
+            'order_id',     // Foreign key on order_items
+            'order_id',     // Local key on invoices
+            'id'            // Local key on orders
+        );
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+
 }

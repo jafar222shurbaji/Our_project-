@@ -1,92 +1,77 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Woods')
-@section('page-title', 'Woods Management')
+@section('page-title')
+    {{ Auth::user()->name }}
+@endsection
 
 @section('content')
-<div class="page-header">
-    <h2 class="page-title">Wood List</h2>
-    <a href="{{ route('woods.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Add Wood
-    </a>
-</div>
-
-<div class="table-container">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Wood Type</th>
-                <th>Created Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($woods as $wood)
-            <tr>
-                <td>{{ $wood->id }}</td>
-                <td>{{ $wood->wood_type }}</td>
-                <td>{{ $wood->created_at->format('d-M-Y') }}</td>
-                <td>
-                    <div class="action-buttons">
-                        <a href="{{ route('woods.edit', $wood) }}" class="btn btn-sm btn-edit">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button class="btn btn-sm btn-delete"
-                                onclick="deleteWood({{ $wood->id }}, '{{ $wood->wood_type }}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" class="text-center">No woods found</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-
-<!-- Pagination -->
-<div class="d-flex justify-content-center">
-    {{ $woods->links() }}
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteWoodModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete the wood "<span id="woodName"></span>"?</p>
-                <p class="text-danger">This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteWoodForm" method="POST" style="display: inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
+    <div class="page-header">
+        <h2 class="page-title mb-0"><i class="fas fa-tree me-2" aria-hidden="true"></i> Wood List</h2>
+        <a href="{{ route('woods.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Add Wood
+        </a>
+    </div>
+    <div class="card shadow border-0 mb-4" style="border-radius: 30px; background: #fff;">
+        <div class="card-body">
+            <form method="GET" action="" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="wood_type" class="form-label">Wood Type</label>
+                    <input type="text" name="wood_type" id="wood_type" class="form-control rounded-pill"
+                        value="{{ request('wood_type') }}">
+                </div>
+                <div class="col-md-6 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill flex-grow-1">Search</button>
+                    <a href="{{ route('woods.index') }}" class="btn btn-secondary rounded-pill flex-grow-1">Reset</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<script>
-function deleteWood(id, name) {
-    const modal = document.getElementById('deleteWoodModal');
-    const form = document.getElementById('deleteWoodForm');
-    const nameSpan = document.getElementById('woodName');
+    <div class="table-container mt-4" style="background: #fff; border-radius: 30px;">
+        <table class="table mb-0" style="border-radius: 30px; overflow: hidden;">
+            <thead style="background: #2F5D50; color: #fff;">
+                <tr>
+                    <th>ID</th>
+                    <th>Wood Type</th>
+                    <th>Created Date</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody style="color: #222;">
+                @forelse($woods as $wood)
+                    <tr>
+                        <td>{{ $wood->id }}</td>
+                        <td>{{ $wood->wood_type }}</td>
+                        <td>{{ $wood->created_at ? $wood->created_at->format('d-m-Y') : 'No Date' }}</td>
+                        <td class="text-center">
+                            <div class="action-button">
+                                <a href="{{ route('woods.edit', $wood) }}" class="btn btn-info  rounded-pill"><i
+                                        class="fas fa-edit"></i> Edit</a>
+                                <form action="{{ route('woods.destroy', $wood) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="btn btn-danger  border: none  border-radius: 8px; rounded-pill"
+                                        onclick="return confirm('هل أنت متأكد؟')"><i class="fas fa-trash"></i>
+                                        Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No woods found.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-    form.action = `/admin/woods/${id}`;
-    nameSpan.textContent = name;
-
-    new bootstrap.Modal(modal).show();
-}
-</script>
+    {{-- Pagination --}}
+    @if ($woods->hasPages())
+        <div class="d-flex justify-content-start mt-3">
+            {{ $woods->links('pagination::simple-bootstrap-5') }}
+        </div>
+    @endif
 @endsection

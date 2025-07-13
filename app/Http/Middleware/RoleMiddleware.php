@@ -23,7 +23,10 @@ class RoleMiddleware
         }
 
         $user = Auth::guard('employee')->user();
-        $allowedRoles = explode(',', $roles);
+        // $allowedRoles = explode(',', $roles);
+        $allowedRoles = collect(explode(',', $roles))->map(fn($r) => trim($r))->all();
+
+
 
         if (!in_array($user->role->role_name, $allowedRoles)) {
             abort(403, 'Access denied. You do not have permission to access this page.');

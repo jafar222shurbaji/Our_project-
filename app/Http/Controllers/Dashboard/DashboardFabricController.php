@@ -16,9 +16,23 @@ class DashboardFabricController extends Controller
     {
         $this->fabricServies = $fabricServies;
     }
-    public function index()
+    public function index(Request $request)
     {
-        $fabrics = $this->fabricServies->getAll();
+        // $fabrics = $this->fabricServies->getAll();
+        $query = $this->fabricServies->getAll();
+
+        if ($request->filled('fabric_type')) {
+            $query->where('fabric_type', 'like', '%' . $request->fabric_type . '%');
+        }
+
+        $fabrics = $query->paginate(10)
+            ->appends($request->except('page'));
+
+        if ($request->filled('fabric_type')) {
+            return redirect()->route('fabrics.index')
+                ->with('error', 'No results found according to your search');
+        }
+
         return view('admin.fabrics.index', compact('fabrics'));
     }
     public function create()
@@ -31,26 +45,26 @@ class DashboardFabricController extends Controller
         return redirect()->route('fabrics.index')
             ->with('success', 'Fabric created successfully.');
     }
-     public function edit(Fabric $fabric)
+    public function edit(Fabric $fabric)
     {
         return view('admin.fabrics.edit', compact('fabric'));
     }
 
     public function update(DashboardFabricRequest $request, Fabric $fabric)
     {
-      $this->fabricServies->update($request->validated(), $fabric);
+        $this->fabricServies->update($request->validated(), $fabric);
 
         return redirect()->route('fabrics.index')
             ->with('success', 'Fabric updated successfully.');
     }
-     public function destroy(Fabric $fabric)
+    public function destroy(Fabric $fabric)
     {
         $deleted = $this->fabricServies->delete($fabric);
 
-        if (!$deleted) {
-            return redirect()->route('fabrics.index')
-                ->with('error', 'Cannot delete fabric. There are products associated with this fabric.');
-        }
+        // if (!$deleted) {
+        //     return redirect()->route('fabrics.index')
+        //         ->with('error', 'Cannot delete fabric. There are products associated with this fabric.');
+        // }
 
         return redirect()->route('fabrics.index')
             ->with('success', 'Fabric deleted successfully.');

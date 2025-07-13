@@ -7,6 +7,7 @@ use App\Http\Requests\DashboardEmployeeRequest;
 use App\Services\DashboardEmployeeService;
 use App\Models\Employee;
 use App\Models\Role;
+use Illuminate\Http\Request;
 
 
 class DashboardEmployeeController extends Controller
@@ -18,10 +19,38 @@ class DashboardEmployeeController extends Controller
         $this->employeeService = $employeeService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $employees = $this->employeeService->getAll();
-        return view('admin.employees.index', compact('employees'));
+        $query = $this->employeeService->getAll();
+
+        if ($request->filled('user_search')) {
+            $query->where('name', 'like', '%' . $request->user_search . '%');
+        }
+
+        if ($request->filled('email_search')) {
+            $query->where('email', 'like', '%' . $request->email_search . '%');
+        }
+
+        if ($request->filled('role_id')) {
+            $query->where('role_id', $request->role_id);
+        }
+
+        if ($request->filled('user_search')) {
+            return redirect()->route('employees.index')
+                ->with('error', 'No results found according to your search');
+        }
+
+        if ($request->filled('email_search')) {
+            return redirect()->route('employees.index')
+                ->with('error', 'No results found according to your search');
+        }
+
+        $employees = $query->paginate(10)
+            ->appends($request->except('page'));
+
+        $roles = Role::where('id', '!=', 1)->orderBy('role_name')->get();
+
+        return view('admin.employees.index', compact('employees', 'roles'));
     }
 
     public function create()

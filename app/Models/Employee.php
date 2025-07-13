@@ -23,5 +23,10 @@ class Employee extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    public function invoice(){
+
+          return $this->hasMany(Invoice::class);
+          
+    }
 
 }

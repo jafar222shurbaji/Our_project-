@@ -17,10 +17,27 @@ class DashboardCategoryController extends Controller
     {
         $this->categoryService = $categoryService;
     }
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->getAll();
+        // $categories = $this->categoryService->getAll();
+        $query = $this->categoryService->getAll();
+
+        if ($request->filled('category_name')) {
+            $query->where('name', 'like', '%' . $request->category_name . '%');
+        }
+
+
+
+        if ($request->filled('category_name')) {
+            return redirect()->route('categories.index')
+                ->with('error', 'No results found according to your search');
+        }
+
+          $categories = $query->paginate(10)
+            ->appends($request->except('page'));
+
         return view('admin.categories.index', compact('categories'));
+
     }
     public function create()
     {
@@ -51,10 +68,10 @@ class DashboardCategoryController extends Controller
     {
         $deleted = $this->categoryService->delete($category);
 
-        if (!$deleted) {
-            return redirect()->route('categories.index')
-                ->with('error', 'Cannot delete category. There are products associated with this category.');
-        }
+        // if (!$deleted) {
+        //     return redirect()->route('categories.index')
+        //         ->with('error', 'Cannot delete category. There are products associated with this category.');
+        // }
 
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted successfully.');

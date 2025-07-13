@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('fabrics', function (Blueprint $table) {
             $table->id();
             $table->string("fabric_type");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

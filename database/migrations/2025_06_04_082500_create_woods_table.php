@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('woods', function (Blueprint $table) {
             $table->id();
             $table->string("wood_type");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

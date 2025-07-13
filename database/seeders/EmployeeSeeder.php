@@ -15,30 +15,53 @@ class EmployeeSeeder extends Seeder
     public function run(): void
     {
         //
+
         Employee::create([
-            'name' => 'Employee Manager',
-            'email' => 'employee@gmail.com',
+            'name' => 'Super Admin',
+            'email' => 'superadmin@gmail.com',
             'password' => Hash::make('password'),
             'role_id' => 1,
         ]);
         Employee::create([
-            'name' => 'jad Manager',
-            'email' => 'jad@gmail.com',
-            'password' => Hash::make('password'),
-            'role_id' => 1,
-        ]);
-        Employee::create([
-            'name' => 'Product Manager',
-            'email' => 'product@gmail.com',
+            'name' => 'Data Entry',
+            'email' => 'dataentry@gmail.com',
             'password' => Hash::make('password'),
             'role_id' => 2,
         ]);
         Employee::create([
-            'name' => 'Order Manager',
-            'email' => 'order@gmail.com',
+            'name' => 'Order Validater',
+            'email' => 'ordervalidater@gmail.com',
             'password' => Hash::make('password'),
             'role_id' => 3,
         ]);
+
+        Employee::create([
+            'name' => 'Shipping representative',
+            'email' => 'shippingrepresentative@gmail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 4,
+        ]);
+        Employee::create([
+            'name' => 'jad',
+            'email' => 'jad@gmail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 4,
+        ]);
+        Employee::create([
+            'name' => 'jafar',
+            'email' => 'jafar@gmail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 4,
+        ]);
+
+        Employee::create([
+            'name' => 'Support team',
+            'email' => 'supportteam@gmail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 5,
+        ]);
+
+
 
     }
 }

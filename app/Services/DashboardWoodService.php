@@ -4,12 +4,12 @@ namespace App\Services;
 
 use App\Models\Wood;
 
-class  DashboardWoodService
+class DashboardWoodService
 {
     public function create(array $data)
     {
         return Wood::create([
-           'wood_type'=> $data['wood_type']
+            'wood_type' => $data['wood_type']
         ]);
     }
 
@@ -20,15 +20,17 @@ class  DashboardWoodService
 
     public function delete(Wood $wood)
     {
-       if ($wood->products()->count() > 0) {
-            return false;
-        }
+        //    if ($wood->products()->count() > 0) {
+        //         return false;
+        //     }
         return $wood->delete();
     }
-   
+
 
     public function getAll()
     {
-        return Wood::orderBy('created_at', 'desc')->paginate(10);
+        return Wood::query()
+            ->whereNull('deleted_at')  // تجاهل المحذوفين
+            ->orderBy('id', 'asc');
     }
 }

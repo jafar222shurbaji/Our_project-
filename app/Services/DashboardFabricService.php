@@ -11,7 +11,7 @@ class DashboardFabricService
     public function create(array $data)
     {
         return Fabric::create([
-           'fabric_type'=> $data['fabric_type']
+            'fabric_type' => $data['fabric_type']
         ]);
     }
 
@@ -23,9 +23,9 @@ class DashboardFabricService
     public function delete(Fabric $fabric)
     {
 
-        if ($fabric->products()->count() > 0) {
-            return false;
-        }
+        // if ($fabric->products()->count() > 0) {
+        //     return false;
+        // }
 
         return $fabric->delete();
 
@@ -33,6 +33,8 @@ class DashboardFabricService
 
     public function getAll()
     {
-        return Fabric::orderBy('created_at', 'desc')->paginate(10);
+        return Fabric::query()
+            ->whereNull('deleted_at')  // تجاهل المحذوفين
+            ->orderBy('id', 'asc');
     }
 }

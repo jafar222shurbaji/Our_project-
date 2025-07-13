@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DashboardProductServies
 {
-    
+
 
     public function create(array $data): Product
     {
@@ -128,7 +128,7 @@ class DashboardProductServies
     }
      public function getAll()
     {
-        return Product::with('category', 'color', 'fabric', 'wood')->get();
+        return Product::with('category', 'color', 'fabric', 'wood');
     }
 
 

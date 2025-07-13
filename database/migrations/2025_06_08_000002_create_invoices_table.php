@@ -9,9 +9,10 @@ return new class extends Migration {
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->enum('status', ['pending', 'paid'])->default('pending');
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('order_id')->references('id')->on('orders');
+            $table->foreignId('employee_id')->nullable()->references('id')->on('employees');
+            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
             $table->string("card_number")->nullable();
             $table->string("card_code")->nullable();
             $table->timestamps();

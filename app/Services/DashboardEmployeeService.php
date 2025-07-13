@@ -34,6 +34,6 @@ class DashboardEmployeeService
 
     public function getAll()
     {
-        return Employee::orderBy('role_id')->paginate(10);
+        return Employee::where('role_id', '!=', 1)->orderBy('role_id');
     }
 }

@@ -84,7 +84,7 @@ class OrderService
         }
         // Rule 2: Shipping not required
         else {
-            if ($order->payment_method === 'Online_prepayment' && $order->status === 'submitted') {
+            if ($order->payment_method === 'online_prepayment' && $order->status === 'submitted') {
                 $canCancel = true;
             } elseif ($order->payment_method === 'pay_on_pickup') {
                 // User can cancel within 48 hours
@@ -99,5 +99,6 @@ class OrderService
         }
 
         $order->cancel();
+        
     }
 }

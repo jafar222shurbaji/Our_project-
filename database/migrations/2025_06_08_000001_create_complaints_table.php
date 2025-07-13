@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('complaints', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users');
             $table->text('description');
             $table->enum('status', ['pending', 'resolved'])->default('pending');
             $table->enum('type', ['complaint', 'suggestion'])->default('complaint');

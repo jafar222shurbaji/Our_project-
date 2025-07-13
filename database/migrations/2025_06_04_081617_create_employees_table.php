@@ -15,7 +15,10 @@ return new class extends Migration {
             $table->string("name");
             $table->string("email");
             $table->string("password");
-            $table->foreignId("role_id")->references("id")->on("roles")->onDelete("cascade");
+            $table->foreignId("role_id")->references("id")->on("roles");
+            $table->string('OTP')->nullable();
+            $table->string('reset_code')->nullable();
+            $table->timestamp('reset_code_expires_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

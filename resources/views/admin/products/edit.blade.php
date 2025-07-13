@@ -1,58 +1,53 @@
-
 @extends('layouts.dashboard')
 
 @section('title', 'Edit Product')
+
 @section('page-title')
     {{ Auth::user()->name }}
 @endsection
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Edit {{ $product->name }}</h5>
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow border-5">
+                    <div class="card-header d-flex align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-couch me-2"></i>
+                            Edit Product: {{ $product->name }}
+                        </h5>
                     </div>
-                    <div class="card-body">
-
+                    <div class="card-body p-4">
                         <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
-
-                            <!-- Hidden input to store photos to delete -->
                             <input type="hidden" name="photos_to_delete" id="photos_to_delete" value="">
-
                             <div class="mb-3">
-                                <label for="name" class="form-label">Product Name</label>
-                                <input type="text" name="name" id="name" class="form-control"
-                                    @error('name') is-invalid @enderror" value="{{ old('name', $product->name) }}" required>
+                                <label for="name" class="form-label fw-bold">Product Name</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" value="{{ old('name', $product->name) }}" required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label fw-bold">Description</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                     rows="3" required>{{ old('description', $product->description) }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" step="0.01"
-                                    class="form-control @error('price') is-invalid @enderror" id="price" name="price"
-                                    value="{{ old('price', $product->price) }}" required>
+                                <label for="price" class="form-label fw-bold">Price</label>
+                                <input type="number" class="form-control @error('price') is-invalid @enderror"
+                                    id="price" name="price" value="{{ old('price', $product->price) }}" required>
                                 @error('price')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="available_quantity" class="form-label">Available Quantity</label>
+                                <label for="available_quantity" class="form-label fw-bold">Available Quantity</label>
                                 <input type="number" class="form-control @error('available_quantity') is-invalid @enderror"
                                     id="available_quantity" name="available_quantity"
                                     value="{{ old('available_quantity', $product->available_quantity) }}" required>
@@ -60,121 +55,108 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="category_id" class="form-label">Category</label>
-                                <select class="form-select @error('category_id') is-invalid @enderror" id="category_id"
-                                    name="category_id" required>
-                                    <option value="">Select Category</option>
+                                <label for="category_id" class="form-label fw-bold">Category</label>
+                                <select class="form-control @error('category_id') is-invalid @enderror" id="category_id"
+                                    name="category_id">
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
-                                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
+                                            {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="color_id" class="form-label">Color</label>
-                                <select class="form-select @error('color_id') is-invalid @enderror" id="color_id"
-                                    name="color_id" required>
+                                <label for="color_id" class="form-label fw-bold">Color</label>
+                                <select class="form-select rounded-pill @error('color_id') is-invalid @enderror"
+                                    id="color_id" name="color_id" required>
                                     <option value="">Select Color</option>
                                     @foreach ($colors as $color)
                                         <option value="{{ $color->id }}"
                                             {{ old('color_id', $product->color_id) == $color->id ? 'selected' : '' }}>
-                                            {{ $color->name }}
-                                        </option>
+                                            {{ $color->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('color_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="fabric_id" class="form-label">Fabric</label>
-                                <select class="form-select @error('fabric_id') is-invalid @enderror" id="fabric_id"
-                                    name="fabric_id" required>
+                                <label for="fabric_id" class="form-label fw-bold">Fabric</label>
+                                <select class="form-select rounded-pill @error('fabric_id') is-invalid @enderror"
+                                    id="fabric_id" name="fabric_id" required>
                                     <option value="">Select Fabric</option>
                                     @foreach ($fabrics as $fabric)
                                         <option value="{{ $fabric->id }}"
                                             {{ old('fabric_id', $product->fabric_id) == $fabric->id ? 'selected' : '' }}>
-                                            {{ $fabric->fabric_type }}
-                                        </option>
+                                            {{ $fabric->fabric_type }}</option>
                                     @endforeach
                                 </select>
                                 @error('fabric_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="wood_id" class="form-label">Wood</label>
-                                <select class="form-select @error('wood_id') is-invalid @enderror" id="wood_id"
-                                    name="wood_id" required>
+                                <label for="wood_id" class="form-label fw-bold">Wood</label>
+                                <select class="form-select rounded-pill @error('wood_id') is-invalid @enderror"
+                                    id="wood_id" name="wood_id" required>
                                     <option value="">Select Wood</option>
                                     @foreach ($woods as $wood)
                                         <option value="{{ $wood->id }}"
                                             {{ old('wood_id', $product->wood_id) == $wood->id ? 'selected' : '' }}>
-                                            {{ $wood->wood_type }}
-                                        </option>
+                                            {{ $wood->wood_type }}</option>
                                     @endforeach
                                 </select>
                                 @error('wood_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="mb-3">
-                                <label for="images" class="form-label">Product Images</label>
-                                <input type="file" name="images[]" id="images" class="form-control"
-                                    @error('images.*') is-invalid @enderror multiple>
+                                <label for="images" class="form-label fw-bold">Product Images</label>
+                                <input type="file" name="images[]" id="images"
+                                    class="form-control rounded-pill @error('images.*') is-invalid @enderror" multiple>
                                 <small class="text-muted">You can select multiple images. Supported formats: JPEG, PNG, JPG,
                                     GIF. Max size: 2MB per image.</small>
                                 @error('images.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-
                                 @if ($product->photos->isEmpty())
-                                    <p class="text-muted">No photo for this Product</p>
+                                    <p class="text-muted mt-2">No photo for this Product</p>
                                 @else
-                                    <div class="row g-2" id="photos-container">
+                                    <div class="row g-2 mt-2" id="photos-container">
                                         @foreach ($product->photos as $photo)
-                                            <div class="col-md-3 mb-2 position-relative photo-item" data-photo-id="{{ $photo->id }}">
+                                            <div class="col-md-3 mb-2 position-relative photo-item"
+                                                data-photo-id="{{ $photo->id }}">
                                                 <img src="{{ asset('storage/' . $photo->photo) }}" alt="Product Image"
-                                                    style="max-width: 100px;" class="photo-image">
-
-                                                <!-- زر الحذف المؤقت -->
+                                                    style="max-width: 100px;" class="photo-image rounded">
                                                 <button type="button"
                                                     class="btn btn-danger btn-sm position-absolute top-0 start-100 translate-middle delete-photo-btn"
-                                                    onclick="markPhotoForDeletion({{ $photo->id }})">
-                                                    &times;
-                                                </button>
-
-                                                <!-- علامة الحذف المؤقت -->
+                                                    onclick="markPhotoForDeletion({{ $photo->id }})"
+                                                    title="Mark for deletion">&times;</button>
                                                 <div class="deletion-overlay" style="display: none;">
                                                     <div class="deletion-text">سيتم الحذف</div>
-                                                    <button type="button" class="btn btn-sm btn-success restore-photo-btn"
-                                                        onclick="restorePhoto({{ $photo->id }})">
-                                                        استعادة
-                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-success restore-photo-btn"
+                                                        onclick="restorePhoto({{ $photo->id }})"
+                                                        title="Restore photo">استعادة</button>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
                                 @endif
                             </div>
-
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('products.index') }}" class="btn btn-secondary" onclick="return confirmCancel()">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Update Product</button>
+                                <a href="{{ route('products.index') }}" class="btn btn-outline-dark px-4">
+                                    <i class="fas fa-arrow-left me-1"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-1"></i> Update Product
+                                </button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -208,6 +190,7 @@
             justify-content: center;
             align-items: center;
             border-radius: 4px;
+            z-index: 10;
         }
 
         .deletion-text {
@@ -229,7 +212,6 @@
                 photosToDelete.push(photoId);
                 updatePhotosToDeleteInput();
 
-                // Update UI
                 const photoItem = document.querySelector(`[data-photo-id="${photoId}"]`);
                 photoItem.classList.add('marked-for-deletion');
                 photoItem.querySelector('.delete-photo-btn').style.display = 'none';
@@ -243,7 +225,6 @@
                 photosToDelete.splice(index, 1);
                 updatePhotosToDeleteInput();
 
-                // Update UI
                 const photoItem = document.querySelector(`[data-photo-id="${photoId}"]`);
                 photoItem.classList.remove('marked-for-deletion');
                 photoItem.querySelector('.delete-photo-btn').style.display = 'block';
@@ -257,26 +238,12 @@
 
         function confirmCancel() {
             if (photosToDelete.length > 0) {
-                const confirmed = confirm('لديك صور محددة للحذف. هل تريد إلغاء كل التغييرات والعودة؟');
-                if (confirmed) {
-                    // Reset all changes
-                    photosToDelete = [];
-                    updatePhotosToDeleteInput();
-
-                    // Reset UI
-                    document.querySelectorAll('.photo-item').forEach(item => {
-                        item.classList.remove('marked-for-deletion');
-                        item.querySelector('.delete-photo-btn').style.display = 'block';
-                        item.querySelector('.deletion-overlay').style.display = 'none';
-                    });
-                }
-                return confirmed;
+                return confirm('لديك صور محددة للحذف. هل تريد إلغاء كل التغييرات والعودة؟');
             }
             return true;
         }
 
-        // Reset photos to delete when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             photosToDelete = [];
             updatePhotosToDeleteInput();
         });

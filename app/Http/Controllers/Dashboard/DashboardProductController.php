@@ -13,6 +13,7 @@ use App\Models\Photo;
 use App\Models\Product;
 use App\Models\Wood;
 use App\Services\DashboardProductServies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardProductController extends Controller
@@ -25,9 +26,41 @@ class DashboardProductController extends Controller
     {
         $this->productService = $productService;
     }
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->getAll();
+        $query = $this->productService->getAll();
+
+
+        if ($request->filled('product_id')) {
+            $query->where('id', $request->product_id);
+        }
+
+        if ($request->filled('product_name')) {
+            $query->where('name', 'like', '%' . $request->product_name . '%');
+        }
+
+        if ($request->filled('category_name')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->category_name . '%');
+            });
+        }
+
+        if ($request->filled('product_id')) {
+            return redirect()->route('products.index')
+                ->with('error', 'No results found according to your search');
+        }
+        if ($request->filled('product_name')) {
+            return redirect()->route('products.index')
+                ->with('error', 'No results found according to your search');
+        }
+        if ($request->filled('category_name')) {
+            return redirect()->route('products.index')
+                ->with('error', 'No results found according to your search');
+        }
+
+        $products = $query->paginate(10)
+            ->appends($request->except('page'));
+
         return view('admin.products.index', compact('products'));
     }
     public function create()
@@ -39,7 +72,7 @@ class DashboardProductController extends Controller
         return view('admin.products.create', compact('categories', 'colors', 'fabrics', 'woods'));
     }
 
- public function store(DashboardStoreProductRequest $request)
+    public function store(DashboardStoreProductRequest $request)
     {
         $validatedData = $request->validated();
 

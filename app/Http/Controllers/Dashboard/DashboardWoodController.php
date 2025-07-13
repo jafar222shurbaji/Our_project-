@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DashboardWoodRequest;
 use App\Models\Wood;
 use App\Services\DashboardWoodService;
+use Illuminate\Http\Request;
 
 class DashboardWoodController extends Controller
 {
@@ -16,9 +17,24 @@ class DashboardWoodController extends Controller
     {
         $this->woodServies = $woodServies;
     }
-    public function index()
+    public function index(Request $request)
     {
-        $woods = $this->woodServies->getAll();
+        // $woods = $this->woodServies->getAll();
+        $query = $this->woodServies->getAll();
+
+        if ($request->filled('wood_type')) {
+            $query->where('wood_type', 'like', '%' . $request->wood_type . '%');
+        }
+
+        if ($request->filled('wood_type')) {
+            return redirect()->route('woods.index')
+                ->with('error', 'No results found according to your search');
+        }
+
+        $woods = $query->paginate(10)
+            ->appends($request->except('page'));
+
+
         return view('admin.woods.index', compact('woods'));
     }
     public function create()
@@ -48,14 +64,14 @@ class DashboardWoodController extends Controller
         return redirect()->route('woods.index')
             ->with('success', 'Wood deleted successfully.');
     }
-     public function destroy(Wood $wood)
+    public function destroy(Wood $wood)
     {
         $deleted = $this->woodServies->delete($wood);
 
-        if (!$deleted) {
-            return redirect()->route('woods.index')
-                ->with('error', 'Cannot delete wood. There are products associated with this wood.');
-        }
+        // if (!$deleted) {
+        //     return redirect()->route('woods.index')
+        //         ->with('error', 'Cannot delete wood. There are products associated with this wood.');
+        // }
 
         return redirect()->route('woods.index')
             ->with('success', 'Woods deleted successfully.');
